@@ -1,0 +1,18 @@
+import { defineConfig } from 'vite';
+import react from '@vitejs/plugin-react';
+
+// https://vitejs.dev/config/
+export default defineConfig({
+  plugins: [react()],
+  server: {
+    port: 5173,
+    // proxy: ทุก request ที่ frontend ยิงไปที่ /api/... ระหว่าง dev
+    // จะถูกส่งต่อไปที่ backend (port 4000) อัตโนมัติ ไม่ต้องเขียน URL เต็มทุกครั้ง
+    proxy: {
+      '/api': {
+        target: 'http://localhost:4000',
+        changeOrigin: true,
+      },
+    },
+  },
+});
