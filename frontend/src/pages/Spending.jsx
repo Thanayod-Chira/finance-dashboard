@@ -4,7 +4,7 @@
 import { useEffect, useState } from 'react';
 import {
   getTransactions, createTransaction, deleteTransaction,
-  getCategories, createCategory,
+  getCategories, createCategory, deleteCategory,
 } from '../api/client.js';
 
 const fmt = new Intl.NumberFormat('th-TH', { maximumFractionDigits: 2 });
@@ -45,6 +45,12 @@ export default function Spending() {
 
   async function handleDelete(id) {
     await deleteTransaction(id);
+    refresh();
+  }
+
+  async function handleDeleteCategory(id) {
+    if (!confirm('ลบหมวดหมู่นี้? งบประมาณที่ผูกอยู่จะถูกลบด้วย')) return;
+    await deleteCategory(id);
     refresh();
   }
 
@@ -108,6 +114,19 @@ export default function Spending() {
               value={newCategoryName} onChange={(e) => setNewCategoryName(e.target.value)} />
             <button className="btn-secondary" type="submit">เพิ่ม</button>
           </form>
+
+          {/* ลิสต์หมวดหมู่ปัจจุบัน */}
+          {filteredCategories.length > 0 && (
+            <ul className="category-list">
+              {filteredCategories.map((c) => (
+                <li key={c.id} className="category-row">
+                  <span className="category-dot" style={{ background: c.color }} />
+                  <span className="category-name">{c.name}</span>
+                  <button className="btn-icon" onClick={() => handleDeleteCategory(c.id)} title="ลบหมวดหมู่">✕</button>
+                </li>
+              ))}
+            </ul>
+          )}
         </div>
 
         {/* --- รายการทั้งหมด --- */}

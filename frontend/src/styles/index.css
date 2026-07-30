@@ -215,6 +215,19 @@ input, select { font-family: inherit; }
 .progress-fill { height: 100%; background: var(--accent-green); border-radius: 100px; transition: width 0.3s; }
 .progress-fill--danger { background: var(--accent-rust); }
 
+/* ---------- Category list (Spending page) ---------- */
+.category-list { list-style: none; margin: 10px 0 0; padding: 0; display: flex; flex-direction: column; gap: 4px; }
+.category-row {
+  display: flex; align-items: center; gap: 8px;
+  padding: 6px 8px; border-radius: 7px;
+  background: var(--paper); border: 1px solid var(--line);
+  font-size: 13.5px;
+}
+.category-row:hover { border-color: var(--accent-green); }
+.category-dot { width: 10px; height: 10px; border-radius: 50%; flex-shrink: 0; }
+.category-name { flex: 1; }
+
+
 /* ---------- Auth pages ---------- */
 .auth-page {
   min-height: 100vh; display: flex; align-items: center; justify-content: center;

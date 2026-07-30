@@ -1,9 +1,6 @@
 // ============================================================
 // routes/transactions.js -> /api/transactions
 // ============================================================
-// นี่คือหัวใจของฟีเจอร์ "spending tracking"
-// รองรับ query params: ?month=2026-07&type=expense&categoryId=...
-// ============================================================
 const express = require('express');
 const pool = require('../db/pool');
 const router = express.Router();
@@ -12,11 +9,10 @@ const router = express.Router();
 router.get('/', async (req, res) => {
   const { month, type, categoryId } = req.query;
 
-  // สร้าง SQL แบบ dynamic โดยเติมเงื่อนไขทีละอันตามที่ผู้ใช้ส่งมา
-  const conditions = ['t.user_id = $1'];
-  const values = [req.userId];
+  const conditions = ['1=1'];
+  const values = [];
 
-  if (month) { // month = "2026-07"
+  if (month) {
     values.push(`${month}-01`);
     conditions.push(`date_trunc('month', t.txn_date) = $${values.length}::date`);
   }
@@ -47,9 +43,9 @@ router.post('/', async (req, res) => {
     return res.status(400).json({ error: 'ต้องระบุ type, amount, txnDate' });
   }
   const result = await pool.query(
-    `INSERT INTO transactions (user_id, category_id, type, amount, description, txn_date)
-     VALUES ($1,$2,$3,$4,$5,$6) RETURNING *`,
-    [req.userId, categoryId || null, type, amount, description || null, txnDate]
+    `INSERT INTO transactions (category_id, type, amount, description, txn_date)
+     VALUES ($1,$2,$3,$4,$5) RETURNING *`,
+    [categoryId || null, type, amount, description || null, txnDate]
   );
   res.status(201).json(result.rows[0]);
 });
@@ -60,8 +56,8 @@ router.put('/:id', async (req, res) => {
   const result = await pool.query(
     `UPDATE transactions
      SET category_id = $1, type = $2, amount = $3, description = $4, txn_date = $5
-     WHERE id = $6 AND user_id = $7 RETURNING *`,
-    [categoryId || null, type, amount, description, txnDate, req.params.id, req.userId]
+     WHERE id = $6 RETURNING *`,
+    [categoryId || null, type, amount, description, txnDate, req.params.id]
   );
   if (result.rows.length === 0) return res.status(404).json({ error: 'ไม่พบรายการ' });
   res.json(result.rows[0]);
@@ -69,7 +65,7 @@ router.put('/:id', async (req, res) => {
 
 // DELETE ลบธุรกรรม
 router.delete('/:id', async (req, res) => {
-  await pool.query('DELETE FROM transactions WHERE id = $1 AND user_id = $2', [req.params.id, req.userId]);
+  await pool.query('DELETE FROM transactions WHERE id = $1', [req.params.id]);
   res.status(204).send();
 });
 

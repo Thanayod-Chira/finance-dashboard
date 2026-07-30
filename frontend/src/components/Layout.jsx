@@ -3,8 +3,7 @@
 // ============================================================
 // โครงหน้าที่ใช้ร่วมกันทุกหน้า (หลัง login): แถบเมนูซ้ายมือ + เนื้อหาหลัก
 // ============================================================
-import { NavLink, useNavigate } from 'react-router-dom';
-import { useAuth } from '../AuthContext.jsx';
+import { NavLink } from 'react-router-dom';
 
 const NAV_ITEMS = [
   { to: '/', label: 'ภาพรวม', icon: '◈', end: true },
@@ -17,8 +16,6 @@ const NAV_ITEMS = [
 ];
 
 export default function Layout({ children }) {
-  const { user, logout } = useAuth();
-  const navigate = useNavigate();
 
   return (
     <div className="app-shell">
@@ -42,18 +39,6 @@ export default function Layout({ children }) {
           ))}
         </nav>
 
-        <div className="sidebar-footer">
-          <div className="user-chip">
-            <span className="user-avatar">{user?.full_name?.[0]?.toUpperCase() || '?'}</span>
-            <span className="user-name">{user?.full_name}</span>
-          </div>
-          <button
-            className="btn-ghost"
-            onClick={() => { logout(); navigate('/login'); }}
-          >
-            ออกจากระบบ
-          </button>
-        </div>
       </aside>
 
       <main className="main-content">{children}</main>

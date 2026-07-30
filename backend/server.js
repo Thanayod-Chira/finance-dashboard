@@ -13,9 +13,6 @@ require('dotenv').config();
 const express = require('express');
 const cors = require('cors');
 
-const { requireAuth } = require('./middleware/auth');
-
-const authRoutes = require('./routes/auth');
 const categoryRoutes = require('./routes/categories');
 const transactionRoutes = require('./routes/transactions');
 const budgetRoutes = require('./routes/budgets');
@@ -34,19 +31,16 @@ app.use(express.json());  // แปลง request body ที่เป็น JSO
 // ---- Health check (เช็คว่าเซิร์ฟเวอร์ยังมีชีวิตอยู่ไหม) ----
 app.get('/api/health', (req, res) => res.json({ status: 'ok' }));
 
-// ---- Public routes (ไม่ต้อง login ก็เรียกได้) ----
-app.use('/api/auth', authRoutes);
+// ---- Routes ----
 
-// ---- Protected routes (ต้องแนบ token ทุก request) ----
-// requireAuth คั่นอยู่ตรงนี้ = ทุก route ข้างล่างนี้ต้อง login ก่อนถึงจะใช้ได้
-app.use('/api/categories', requireAuth, categoryRoutes);
-app.use('/api/transactions', requireAuth, transactionRoutes);
-app.use('/api/budgets', requireAuth, budgetRoutes);
-app.use('/api/subscriptions', requireAuth, subscriptionRoutes);
-app.use('/api/bills', requireAuth, billRoutes);
-app.use('/api/investments', requireAuth, investmentRoutes);
-app.use('/api/goals', requireAuth, goalRoutes);
-app.use('/api/analytics', requireAuth, analyticsRoutes);
+app.use('/api/categories', categoryRoutes);
+app.use('/api/transactions', transactionRoutes);
+app.use('/api/budgets', budgetRoutes);
+app.use('/api/subscriptions', subscriptionRoutes);
+app.use('/api/bills', billRoutes);
+app.use('/api/investments', investmentRoutes);
+app.use('/api/goals', goalRoutes);
+app.use('/api/analytics', analyticsRoutes);
 
 // ---- Error handler กลาง (ดักจับ error ที่หลุดมาจาก route ไหนก็ตาม) ----
 app.use((err, req, res, next) => {

@@ -5,16 +5,11 @@ const express = require('express');
 const pool = require('../db/pool');
 const router = express.Router();
 
-// GET ทั้งหมดของ user ที่ login อยู่
 router.get('/', async (req, res) => {
-  const result = await pool.query(
-    'SELECT * FROM categories WHERE user_id = $1 ORDER BY type, name',
-    [req.userId]
-  );
+  const result = await pool.query('SELECT * FROM categories ORDER BY type, name');
   res.json(result.rows);
 });
 
-// POST สร้างหมวดหมู่ใหม่
 router.post('/', async (req, res) => {
   const { name, type, color } = req.body;
   if (!name || !['expense', 'income'].includes(type)) {
@@ -22,8 +17,8 @@ router.post('/', async (req, res) => {
   }
   try {
     const result = await pool.query(
-      `INSERT INTO categories (user_id, name, type, color) VALUES ($1,$2,$3,$4) RETURNING *`,
-      [req.userId, name, type, color || '#4C6E5D']
+      `INSERT INTO categories (name, type, color) VALUES ($1,$2,$3) RETURNING *`,
+      [name, type, color || '#4C6E5D']
     );
     res.status(201).json(result.rows[0]);
   } catch (err) {
@@ -32,9 +27,8 @@ router.post('/', async (req, res) => {
   }
 });
 
-// DELETE ลบหมวดหมู่
 router.delete('/:id', async (req, res) => {
-  await pool.query('DELETE FROM categories WHERE id = $1 AND user_id = $2', [req.params.id, req.userId]);
+  await pool.query('DELETE FROM categories WHERE id = $1', [req.params.id]);
   res.status(204).send();
 });
 
