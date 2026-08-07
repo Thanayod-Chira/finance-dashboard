@@ -11,6 +11,7 @@ import Subscriptions from './pages/Subscriptions.jsx';
 import Bills from './pages/Bills.jsx';
 import Investments from './pages/Investments.jsx';
 import Goals from './pages/Goals.jsx';
+import AiChat from './pages/AiChat.jsx';
 
 export default function App() {
   return (
@@ -23,6 +24,7 @@ export default function App() {
         <Route path="/bills" element={<Bills />} />
         <Route path="/investments" element={<Investments />} />
         <Route path="/goals" element={<Goals />} />
+        <Route path="/ai-chat" element={<AiChat />} />
 
         {/* เส้นทางที่ไม่รู้จัก -> กลับหน้าแรก */}
         <Route path="*" element={<Navigate to="/" replace />} />

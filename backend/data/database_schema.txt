@@ -1,0 +1,9 @@
+categories:id,name,type(expense|income)
+transactions:id,category_id,type,amount,txn_date
+budgets:id,category_id,month_year,monthly_limit
+subscriptions:id,name,amount,billing_cycle(monthly|yearly),category,is_active
+recurring_bills:id,name,amount,due_day,category,is_autopay
+investments:id,name,asset_type,amount_invested
+financial_goals:id,name,target_amount,current_amount
+
+joins: transactions.category_id=categories.id, budgets.category_id=categories.id

@@ -9,7 +9,11 @@ router.get('/', async (req, res) => {
   const result = await pool.query(
     'SELECT * FROM financial_goals ORDER BY target_date NULLS LAST'
   );
-  res.json(result.rows);
+  res.json(result.rows.map(r => ({
+    ...r,
+    target_amount: Number(r.target_amount),
+    current_amount: Number(r.current_amount),
+  })));
 });
 
 router.post('/', async (req, res) => {

@@ -21,6 +21,7 @@ const billRoutes = require('./routes/bills');
 const investmentRoutes = require('./routes/investments');
 const goalRoutes = require('./routes/goals');
 const analyticsRoutes = require('./routes/analytics');
+const askRoute = require('./routes/ask');
 
 const app = express();
 
@@ -41,6 +42,7 @@ app.use('/api/bills', billRoutes);
 app.use('/api/investments', investmentRoutes);
 app.use('/api/goals', goalRoutes);
 app.use('/api/analytics', analyticsRoutes);
+app.use('/api/ask', askRoute);
 
 // ---- Error handler กลาง (ดักจับ error ที่หลุดมาจาก route ไหนก็ตาม) ----
 app.use((err, req, res, next) => {

@@ -19,26 +19,34 @@ export default function Dashboard() {
   const [trend, setTrend] = useState([]);
   const [upcoming, setUpcoming] = useState(null);
   const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
 
   // useEffect ที่มี [] ว่างท้ายสุด = "รันครั้งเดียวตอนหน้าจอนี้เพิ่งโหลดเสร็จ"
   useEffect(() => {
     async function loadAll() {
-      const [s, c, t, u] = await Promise.all([
-        getSummary(currentMonth),
-        getSpendingByCategory(currentMonth),
-        getMonthlyTrend(6),
-        getUpcoming(),
-      ]);
-      setSummary(s);
-      setByCategory(c);
-      setTrend(t);
-      setUpcoming(u);
-      setLoading(false);
+      try {
+        const [s, c, t, u] = await Promise.all([
+          getSummary(currentMonth),
+          getSpendingByCategory(currentMonth),
+          getMonthlyTrend(6),
+          getUpcoming(),
+        ]);
+        setSummary(s);
+        setByCategory(c);
+        setTrend(t);
+        setUpcoming(u);
+      } catch (err) {
+        setError('ไม่สามารถโหลดข้อมูลได้ กรุณาลองใหม่อีกครั้ง');
+      } finally {
+        setLoading(false);
+      }
     }
     loadAll();
   }, []);
 
   if (loading) return <div className="page-loading">กำลังโหลดข้อมูล...</div>;
+  if (error) return <div className="page-loading" style={{ color: '#ef4444' }}>{error}</div>;
+  if (!summary) return null;
 
   return (
     <div className="page">
@@ -52,11 +60,11 @@ export default function Dashboard() {
         <StatCard label="รายรับเดือนนี้" value={summary.monthlyIncome} tone="positive" />
         <StatCard label="รายจ่ายเดือนนี้" value={summary.monthlyExpense} tone="negative" />
         <StatCard label="กระแสเงินสดสุทธิ" value={summary.netCashflow} tone={summary.netCashflow >= 0 ? 'positive' : 'negative'} />
-        <StatCard label="มูลค่าการลงทุน" value={summary.investmentCurrentValue} tone="neutral" />
+        <StatCard label="เงินลงทุนรวม" value={summary.investedTotal} tone="neutral" />
       </section>
 
       <section className="stat-grid">
-        <StatCard label="กำไร/ขาดทุนจากลงทุน" value={summary.investmentGain} tone={summary.investmentGain >= 0 ? 'positive' : 'negative'} />
+        <StatCard label="เป้าหมายการออมรวม" value={summary.goalsTarget} tone="neutral" />
         <StatCard label="เงินเก็บเพื่อเป้าหมาย" value={summary.goalsSaved} tone="neutral" />
         <StatCard label="ค่าสมาชิกรายเดือน" value={summary.subscriptionsMonthly} tone="negative" />
         <StatCard label="บิลประจำรายเดือน" value={summary.billsMonthly} tone="negative" />
@@ -110,7 +118,7 @@ export default function Dashboard() {
       {/* --- รายการที่ใกล้ครบกำหนดจ่าย --- */}
       <div className="panel">
         <h2>ใกล้ถึงกำหนดจ่าย (14 วันข้างหน้า)</h2>
-        {upcoming.subscriptions.length === 0 ? (
+        {!upcoming || upcoming.subscriptions.length === 0 ? (
           <p className="empty-hint">ไม่มีรายการที่ใกล้ครบกำหนด</p>
         ) : (
           <ul className="upcoming-list">

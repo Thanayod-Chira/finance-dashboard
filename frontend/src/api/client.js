@@ -81,4 +81,7 @@ export const getMonthlyTrend = (months) =>
   api.get('/analytics/monthly-trend', { params: { months } }).then((r) => r.data);
 export const getUpcoming = () => api.get('/analytics/upcoming').then((r) => r.data);
 
+// ---- AI Chat ----
+export const askAI = (question) => api.post('/ask', { question }).then((r) => r.data);
+
 export default api;

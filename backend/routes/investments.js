@@ -7,7 +7,10 @@ const router = express.Router();
 
 router.get('/', async (req, res) => {
   const result = await pool.query('SELECT * FROM investments ORDER BY purchase_date DESC');
-  res.json(result.rows);
+  res.json(result.rows.map(r => ({
+    ...r,
+    amount_invested: Number(r.amount_invested),
+  })));
 });
 
 router.post('/', async (req, res) => {

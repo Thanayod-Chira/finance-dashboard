@@ -13,6 +13,7 @@ const NAV_ITEMS = [
   { to: '/bills', label: 'บิลประจำ', icon: '▧' },
   { to: '/investments', label: 'การลงทุน', icon: '↗' },
   { to: '/goals', label: 'เป้าหมาย', icon: '◎' },
+  { to: '/ai-chat', label: 'ผู้ช่วย AI', icon: '✦' },
 ];
 
 export default function Layout({ children }) {

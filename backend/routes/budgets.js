@@ -24,7 +24,11 @@ router.get('/', async (req, res) => {
      ORDER BY c.name`,
     [`${month}-01`]
   );
-  res.json(result.rows);
+  res.json(result.rows.map(r => ({
+    ...r,
+    monthly_limit: Number(r.monthly_limit),
+    spent: Number(r.spent),
+  })));
 });
 
 // POST สร้าง/อัปเดตงบประมาณ (upsert)
